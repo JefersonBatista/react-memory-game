@@ -1,0 +1,33 @@
+.MemoryGame {
+    width: 420px;
+    height: 490px;
+    margin: 0 auto;
+    background-color: rgb(64, 64, 64);
+    border: 6px solid rgb(64, 64, 64);
+    border-radius: 10px;
+    display: grid;
+    grid-template: repeat(7, 1fr) / repeat(6, 1fr);
+}
+
+.MemoryGame > div {
+    border: 6px solid rgb(64, 64, 64);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+
+.MemoryGame > div > img {
+    flex-shrink: 0;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.MemoryGame > .Panel {
+    font-family: Helvetica;
+    font-weight: bold;
+    font-size: 0.88em;
+    text-align: center;
+    color: rgb(7, 19, 126);   
+    border-radius: 50%;
+}
