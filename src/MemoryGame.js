@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import './MemoryGame.css'
+import { shuffle_cards } from './Shuffle'
 
 function MemoryGame() {
-    const [cards, setCards] = useState(new Array(36).fill(0))
-
+    const [board, setBoard] = useState(new Array(36).fill(0))
+    const [cards, setCards] = useState(shuffle_cards(36))
 
     const new_game = 'Novo Jogo'
     const [info, setInfo] = useState('')
@@ -17,7 +18,9 @@ function MemoryGame() {
     const [flipped, setFlipped] = useState(0)
 
     const start = () => {
-        setCards(new Array(36).fill(0))
+        setCards(shuffle_cards(36))
+
+        setBoard(new Array(36).fill(0))
         setInfo('')
         setMsg('')
         setErrors(0)
@@ -28,11 +31,9 @@ function MemoryGame() {
         setFlipped(0)
     }
 
-    const bestMSG = useCallback(() => {
+    const bestMSG = () => {
         return isNaN(best)? 'Melhor: -' : `Melhor: ${best}`
-    }, [best])
-
-    useEffect(bestMSG, [bestMSG])
+    }
 
     const game_over = () => {
         if(isNaN(best) || errors < best) {
@@ -44,10 +45,10 @@ function MemoryGame() {
     }
 
     const flip_card = (index) => () => {
-        if(cards[index] === 0) {
-            var new_score = score
-            const new_cards = [...cards]
-            new_cards[index] = cards[index] === 0? Math.floor((index/2) + 1) : 0
+        if(board[index] === 0) {
+            let new_score = score
+            const new_board = [...board]
+            new_board[index] = cards[index]
 
             switch(flipped) {
                 case 0:
@@ -60,8 +61,8 @@ function MemoryGame() {
                     setFlipped(flipped + 1)
 
                     console.log(`card_indexes: ${card1}, ${index}`)
-                    console.log(`new_cards: ${new_cards[card1]}, ${new_cards[index]}`)
-                    if(new_cards[card1] === new_cards[index]) {
+                    console.log(`new_cards: ${new_board[card1]}, ${new_board[index]}`)
+                    if(new_board[card1] === new_board[index]) {
                         new_score++
                         setInfo('Boa!')
                     } else {
@@ -70,9 +71,9 @@ function MemoryGame() {
                     }
                     break;
                 default:
-                    if(cards[card1] !== cards[card2]) {
-                        new_cards[card1] = 0
-                        new_cards[card2] = 0
+                    if(board[card1] !== board[card2]) {
+                        new_board[card1] = 0
+                        new_board[card2] = 0
                     }
                     setCard1(index)
                     setCard2(NaN)
@@ -85,7 +86,7 @@ function MemoryGame() {
                 game_over();
             }
 
-            setCards(new_cards)
+            setBoard(new_board)
         }
     }
 
@@ -103,7 +104,7 @@ function MemoryGame() {
 
     return(
         <div className="MemoryGame">
-            {cards.map(renderCard)}
+            {board.map(renderCard)}
             <button className="Panel" onClick={start}>{new_game}</button>
             <div className="Panel">{info}</div>
             <div className="Panel">{msg}</div>
