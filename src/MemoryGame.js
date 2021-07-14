@@ -60,8 +60,6 @@ function MemoryGame() {
                     setCard2(index)
                     setFlipped(flipped + 1)
 
-                    console.log(`card_indexes: ${card1}, ${index}`)
-                    console.log(`new_cards: ${new_board[card1]}, ${new_board[index]}`)
                     if(new_board[card1] === new_board[index]) {
                         new_score++
                         setInfo('Boa!')
@@ -91,9 +89,10 @@ function MemoryGame() {
     }
 
     const renderCard = (number, index) => {
+        const IMAGES_PATH = `${process.env.PUBLIC_URL}/assets/images/`
         const imgStr = number > 0?
-            `${process.env.PUBLIC_URL}/assets/images/${number}.png` :
-            `${process.env.PUBLIC_URL}/assets/images/back.jpg`
+            `${IMAGES_PATH}${number}.png` :
+            `${IMAGES_PATH}back.jpg`
         
         return (
             <div>
