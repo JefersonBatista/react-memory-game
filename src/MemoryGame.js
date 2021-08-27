@@ -1,10 +1,22 @@
 import React, { useState } from 'react'
 import './MemoryGame.css'
-import { shuffle_cards } from './Shuffle'
+// import { shuffle_cards } from './Shuffle'
+
+function order_cards(pairs) {
+    let cards = new Array(2 * pairs)
+    let i = 0;
+    for(let p = 1; p <= pairs; p++) {
+        cards[i++] = p
+        cards[i++] = p
+    }
+
+    return cards
+}
 
 function MemoryGame() {
     const [board, setBoard] = useState(new Array(36).fill(0))
-    const [cards, setCards] = useState(shuffle_cards(36))
+    // const [cards, setCards] = useState(shuffle_cards(36))
+    const [cards, setCards] = useState(order_cards(18))
 
     const new_game = 'Novo Jogo'
     const [info, setInfo] = useState('')
@@ -17,8 +29,14 @@ function MemoryGame() {
     const [card2, setCard2] = useState(NaN)
     const [flipped, setFlipped] = useState(0)
 
+    // Variable to enable and disable the board
+    // Test it with and without use state
+    // let enabled = true
+    const [enabled, setEnabled] = useState(true)
+
     const start = () => {
-        setCards(shuffle_cards(36))
+        // setCards(shuffle_cards(36))
+        setCards(order_cards(18))
 
         setBoard(new Array(36).fill(0))
         setInfo('')
@@ -29,6 +47,7 @@ function MemoryGame() {
         setCard1(NaN)
         setCard2(NaN)
         setFlipped(0)
+        setEnabled(true)
     }
 
     const bestMSG = () => {
@@ -45,7 +64,7 @@ function MemoryGame() {
     }
 
     const flip_card = (index) => () => {
-        if(board[index] === 0) {
+        if(board[index] === 0 && enabled) {
             let new_score = score
             const new_board = [...board]
             new_board[index] = cards[index]
@@ -66,6 +85,12 @@ function MemoryGame() {
                     } else {
                         setErrors(errors + 1)
                         setInfo('Errou!')
+
+                        // Blocking board during 2 secs after error
+                        setEnabled(false)
+                        setTimeout(() => {
+                            setEnabled(true)
+                        }, [2000])
                     }
                     break;
                 default:
