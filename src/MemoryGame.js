@@ -1,22 +1,10 @@
 import React, { useState } from 'react'
 import './MemoryGame.css'
-// import { shuffle_cards } from './Shuffle'
-
-function order_cards(pairs) {
-    let cards = new Array(2 * pairs)
-    let i = 0;
-    for(let p = 1; p <= pairs; p++) {
-        cards[i++] = p
-        cards[i++] = p
-    }
-
-    return cards
-}
+import { shuffle_cards } from './Shuffle'
 
 function MemoryGame() {
     const [board, setBoard] = useState(new Array(36).fill(0))
-    // const [cards, setCards] = useState(shuffle_cards(36))
-    const [cards, setCards] = useState(order_cards(18))
+    const [cards, setCards] = useState(shuffle_cards(36))
 
     const new_game = 'Novo Jogo'
     const [info, setInfo] = useState('')
@@ -27,16 +15,13 @@ function MemoryGame() {
 
     const [card1, setCard1] = useState(NaN)
     const [card2, setCard2] = useState(NaN)
-    const [flipped, setFlipped] = useState(0)
+    const [flipped, setFlipped] = useState(false)
 
     // Variable to enable and disable the board
-    // Test it with and without use state
-    // let enabled = true
     const [enabled, setEnabled] = useState(true)
 
     const start = () => {
-        // setCards(shuffle_cards(36))
-        setCards(order_cards(18))
+        setCards(shuffle_cards(36))
 
         setBoard(new Array(36).fill(0))
         setInfo('')
@@ -46,7 +31,7 @@ function MemoryGame() {
 
         setCard1(NaN)
         setCard2(NaN)
-        setFlipped(0)
+        setFlipped(false)
         setEnabled(true)
     }
 
@@ -69,39 +54,36 @@ function MemoryGame() {
             const new_board = [...board]
             new_board[index] = cards[index]
 
-            switch(flipped) {
-                case 0:
-                    setCard1(index)
-                    setFlipped(flipped + 1)
-                    setInfo('')
-                    break;
-                case 1:
+            if(flipped) {
+                setFlipped(false)
+
+                if(new_board[card1] === new_board[index]) {
+                    new_score++
+                    setInfo('Boa!')
+                    setCard1(NaN)
+                    setCard2(NaN)
+                } else {
                     setCard2(index)
-                    setFlipped(flipped + 1)
+                    setErrors(errors + 1)
+                    setInfo('Errou!')
 
-                    if(new_board[card1] === new_board[index]) {
-                        new_score++
-                        setInfo('Boa!')
-                    } else {
-                        setErrors(errors + 1)
-                        setInfo('Errou!')
-
-                        // Blocking board during 2 secs after error
-                        setEnabled(false)
-                        setTimeout(() => {
-                            setEnabled(true)
-                        }, [2000])
-                    }
-                    break;
-                default:
-                    if(board[card1] !== board[card2]) {
+                    // Blocking board during 2 secs after error
+                    setEnabled(false)
+                    setTimeout(() => {
+                        const new_board = [...board]
                         new_board[card1] = 0
                         new_board[card2] = 0
-                    }
-                    setCard1(index)
-                    setCard2(NaN)
-                    setFlipped(1)
-                    setInfo('')
+                        setCard1(NaN)
+                        setCard2(NaN)
+                        setInfo('')
+                        setBoard(new_board)
+                        setEnabled(true)
+                    }, [1250])
+                }
+            } else {
+                setCard1(index)
+                setFlipped(true)
+                setInfo('')
             }
 
             setScore(new_score)
@@ -114,10 +96,10 @@ function MemoryGame() {
     }
 
     const renderCard = (number, index) => {
-        const IMAGES_PATH = `${process.env.PUBLIC_URL}/assets/images/`
+        const IMAGES_PATH = `${process.env.PUBLIC_URL}/assets/images`
         const imgStr = number > 0?
-            `${IMAGES_PATH}${number}.png` :
-            `${IMAGES_PATH}back.jpg`
+            `${IMAGES_PATH}/${number}.png` :
+            `${IMAGES_PATH}/back.jpg`
         
         return (
             <div>
