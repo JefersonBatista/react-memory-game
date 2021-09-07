@@ -1,6 +1,6 @@
 .MemoryGame {
-    width: min(96vw, 78vh);
-    height: min(91vh, 112vw);
+    width: min(100vw, 84vh);
+    height: min(98vh, 116.66vw);
     margin: 0 auto;
     background-color: rgb(64, 64, 64);
     border: 6px solid rgb(64, 64, 64);
